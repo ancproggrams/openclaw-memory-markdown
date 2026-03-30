@@ -6,13 +6,13 @@ Marq Memory is a markdown-first memory plugin for OpenClaw.
 
 It uses the filesystem as the canonical storage layer and keeps memory readable by separating it into distinct layers.
 
-The design is based on three cooperating parts:
+The design is based on three cooperating memory modes:
 
-1. a durable storage layer
-2. a recall layer
-3. a maintenance layer
+1. declarative memory
+2. procedural memory
+3. maintenance memory
 
-That distinction matters. Storage keeps the truth. Recall helps find it again. Maintenance keeps both healthy over time.
+That distinction matters. Declarative memory keeps durable truth. Procedural memory captures repeatable action. Maintenance memory keeps both healthy and continuously improvable over time.
 
 ## Layers
 
@@ -76,6 +76,7 @@ It includes:
 - nightly consolidation
 - quality gate checks
 - recurring reindex / scan jobs
+- skill update suggestion sidecars derived from stable procedures
 
 ## Read path
 
@@ -110,9 +111,10 @@ It preserves chronology and makes mistakes easier to audit.
 
 The full system works like this:
 
-- markdown files store durable memory
+- declarative markdown stores durable memory
+- curated procedural markdown stores repeatable runbooks
 - search or indexing retrieves the right subset when needed
-- cron jobs and maintenance scripts keep new notes promoted, checked, and searchable
+- maintenance sidecars and scripts keep new notes promoted, checked, and suggest where skills should be updated
 
 That cooperation is the point of the design. A memory system fails when one of those layers is missing.
 

@@ -2,7 +2,9 @@ import { Type } from '@sinclair/typebox';
 import { definePluginEntry } from 'openclaw/plugin-sdk/plugin-entry';
 import { appendDailyMemory, resolveConfig, searchMemory } from './core.js';
 import { promoteDailyMemory } from './promotion.js';
+import { procedureRecall } from './procedure-recall.js';
 import { sceneRecall } from './scene-recall.js';
+import { listSkillUpdateSuggestions, generateSkillUpdateSuggestions } from './skill-update-suggestions.js';
 import { checkTaskMemory, TASK_STATUSES, writeTaskRecord } from './task-memory.js';
 
 export default definePluginEntry({
@@ -64,12 +66,17 @@ export default definePluginEntry({
               operationalMemory: {
                 taskStore: `${cfg.memoryDir}/operations/tasks.jsonl`,
                 workflowStore: `${cfg.memoryDir}/operations/workflows.jsonl`,
+                procedureCandidateStore: `${cfg.memoryDir}/operations/procedure-candidates.jsonl`,
+                curatedProcedureDir: `${cfg.memoryDir}/procedures/`,
                 markdownSourceOfTruth: true,
               },
               promotionSidecars: {
                 registry: `${cfg.memoryDir}/registry.jsonl`,
                 promotions: `${cfg.memoryDir}/promotions.jsonl`,
                 conflicts: `${cfg.memoryDir}/conflicts.jsonl`,
+              },
+              maintenanceSidecars: {
+                skillUpdateSuggestions: `${cfg.memoryDir}/skill-update-suggestions.jsonl`,
               },
             }, null, 2),
           }],
@@ -145,12 +152,34 @@ export default definePluginEntry({
     });
 
     api.registerTool({
+      name: 'marq_procedure_recall',
+      description: 'Recall task-like memory with stronger preference for curated procedures and recovery playbooks when relevant.',
+      parameters: Type.Object({
+        query: Type.String(),
+        scene: Type.Optional(Type.String()),
+        project: Type.Optional(Type.String()),
+        taskLike: Type.Optional(Type.Boolean()),
+        maxResults: Type.Optional(Type.Number({ minimum: 1, maximum: 10 })),
+      }),
+      async execute(_id, params) {
+        const result = await procedureRecall(cfg, params);
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          }],
+        };
+      },
+    });
+
+    api.registerTool({
       name: 'marq_scene_recall',
       description: 'Recall memory with scene-aware and project-aware ranking layered on top of local markdown search.',
       parameters: Type.Object({
         query: Type.String(),
         scene: Type.Optional(Type.String()),
         project: Type.Optional(Type.String()),
+        taskLike: Type.Optional(Type.Boolean()),
         maxResults: Type.Optional(Type.Number({ minimum: 1, maximum: 10 })),
       }),
       async execute(_id, params) {
@@ -159,6 +188,29 @@ export default definePluginEntry({
           content: [{
             type: 'text',
             text: JSON.stringify(result, null, 2),
+          }],
+        };
+      },
+    });
+
+    api.registerTool({
+      name: 'marq_skill_update_suggestions',
+      description: 'Generate and review additive skill update suggestions derived from stable procedural memory.',
+      parameters: Type.Object({
+        minimumOccurrenceCount: Type.Optional(Type.Number({ minimum: 2, maximum: 20 })),
+        requirePromoted: Type.Optional(Type.Boolean()),
+        maxResults: Type.Optional(Type.Number({ minimum: 1, maximum: 20 })),
+      }),
+      async execute(_id, params) {
+        const generation = await generateSkillUpdateSuggestions(cfg, params);
+        const listing = await listSkillUpdateSuggestions(cfg, {
+          status: 'pending-review',
+          maxResults: params.maxResults || 10,
+        });
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify({ ...generation, pendingReview: listing }, null, 2),
           }],
         };
       },

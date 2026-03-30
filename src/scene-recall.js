@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { collectFiles, safeRead, splitSnippet } from './core.js';
 import { inferScene } from './fingerprint.js';
+import { isTaskLikeQuery } from './procedure-recall.js';
 
 function scoreText(content, terms) {
   const lower = content.toLowerCase();
@@ -21,6 +22,7 @@ function sceneWeight(filePath, scene, project) {
 export async function sceneRecall(cfg, input) {
   const scene = inferScene(input.query, input.scene);
   const project = input.project || null;
+  const taskLike = input.taskLike ?? isTaskLikeQuery(input.query);
   const files = await collectFiles(cfg);
   const terms = input.query.toLowerCase().split(/\s+/).filter(Boolean);
   const scored = [];
@@ -32,14 +34,20 @@ export async function sceneRecall(cfg, input) {
     if (textScore <= 0) continue;
 
     const relPath = path.relative(cfg.workspaceRoot, file);
+    const relLower = relPath.toLowerCase();
     const contentLower = content.toLowerCase();
     let score = textScore;
     if (scene && scene !== 'general') {
       if (contentLower.includes(scene)) score += 5;
       score += sceneWeight(relPath, scene, project);
     }
-    if (project && (relPath.toLowerCase().includes(project.toLowerCase()) || contentLower.includes(project.toLowerCase()))) {
+    if (project && (relLower.includes(project.toLowerCase()) || contentLower.includes(project.toLowerCase()))) {
       score += 4;
+    }
+    if (taskLike && (relLower.includes('/procedures/') || relLower.startsWith('memory/procedures/'))) {
+      score += 10;
+      if (contentLower.includes('recovery playbook')) score += 4;
+      if (scene && relLower.includes(`${scene.toLowerCase()}.md`)) score += 6;
     }
 
     scored.push({
@@ -47,6 +55,7 @@ export async function sceneRecall(cfg, input) {
       score,
       scene,
       project,
+      taskLike,
       snippet: splitSnippet(content, input.query),
     });
   }
@@ -56,6 +65,7 @@ export async function sceneRecall(cfg, input) {
     query: input.query,
     scene,
     project,
+    taskLike,
     results,
   };
 }

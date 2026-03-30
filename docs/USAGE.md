@@ -48,6 +48,7 @@ Example:
 ## Tool: `marq_task_write`
 
 Appends a task outcome to `memory/operations/tasks.jsonl`.
+Successful repeated writes can also create procedure candidates in `memory/operations/procedure-candidates.jsonl`.
 
 Example:
 
@@ -60,6 +61,75 @@ Example:
   "summary": "Health check passed",
   "reusable": true
 }
+```
+
+Use `reusable: true` on repeated successful workflows that are likely runbook candidates.
+
+Repeated failed/partial attempts followed by successful reusable runs can also seed lightweight recovery playbook evidence in the promoted procedure markdown.
+
+## Tool: `marq_procedure_recall`
+
+Use this when the query is task-like and you want curated procedures and recovery playbooks to rank above generic notes when possible.
+
+Example:
+
+```json
+{
+  "query": "how to recover broken docker compose deploy",
+  "scene": "deployment",
+  "project": "service-desk-openclaw",
+  "maxResults": 5
+}
+```
+
+## Tool: `marq_skill_update_suggestions`
+
+Generates additive skill-update suggestions from stable procedural memory and returns the current pending-review set.
+
+Example:
+
+```json
+{
+  "minimumOccurrenceCount": 3,
+  "requirePromoted": true,
+  "maxResults": 5
+}
+```
+
+## Script: review procedure candidates
+
+Review pending candidates captured from repeated successful task records:
+
+```bash
+npm run memory:review-procedures
+```
+
+## Script: promote curated procedure markdown
+
+Promote strong pending candidates into scene-grouped markdown playbooks under `memory/procedures/`:
+
+```bash
+npm run memory:promote-procedures
+```
+
+Optionally require a higher occurrence threshold:
+
+```bash
+node scripts/promote-procedures.js 3
+```
+
+## Script: generate skill update suggestions
+
+Generate maintenance suggestions from strong procedures:
+
+```bash
+npm run memory:skill-update-suggestions
+```
+
+Or require a different stability threshold:
+
+```bash
+node scripts/generate-skill-update-suggestions.js 4
 ```
 
 ## Recommended note style

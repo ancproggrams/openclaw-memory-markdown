@@ -2,7 +2,7 @@
   "id": "marq-memory",
   "kind": "memory",
   "name": "Marqs Memorie",
-  "description": "Marqs Memorie: markdown-first memory plugin for OpenClaw with operational memory, smart promotion, task dedup, and scene-aware recall.",
+  "description": "Marqs Memorie: markdown-first memory plugin for OpenClaw with declarative, procedural, and maintenance memory layers.",
   "configSchema": {
     "type": "object",
     "additionalProperties": false,

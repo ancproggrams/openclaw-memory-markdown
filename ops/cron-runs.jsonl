@@ -1,0 +1,1 @@
+{"timestamp":"2026-03-30T20:01:29.173Z","component":"marq-memory","eventType":"cron_completed","status":"ok","durationMs":6,"details":{"job":"memory:reindex","indexedFiles":9}}

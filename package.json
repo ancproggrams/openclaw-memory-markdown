@@ -1,7 +1,7 @@
 {
   "name": "@marq/marqs-memorie",
-  "version": "0.6.0",
-  "description": "Marqs Memorie: markdown-first memory plugin for OpenClaw with operational memory, smart promotion, task dedup, and scene-aware recall.",
+  "version": "1.0.0",
+  "description": "Marqs Memorie: markdown-first memory plugin for OpenClaw with declarative, procedural, and maintenance memory layers.",
   "type": "module",
   "license": "MIT",
   "author": "Marq",
@@ -28,6 +28,7 @@
     "docs",
     "tests",
     "examples",
+    "memory",
     "README.md",
     "LICENSE",
     "CHANGELOG.md",
@@ -44,7 +45,10 @@
     "memory:consolidate": "node scripts/consolidate-memory.js",
     "memory:promote-smart": "node scripts/promote-smart.js",
     "memory:quality-gate": "node scripts/quality-gate.js",
-    "memory:reindex": "node scripts/reindex.js"
+    "memory:reindex": "node scripts/reindex.js",
+    "memory:review-procedures": "node scripts/review-procedure-candidates.js",
+    "memory:promote-procedures": "node scripts/promote-procedures.js",
+    "memory:skill-update-suggestions": "node scripts/generate-skill-update-suggestions.js"
   },
   "dependencies": {
     "@sinclair/typebox": "^0.34.48",

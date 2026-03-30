@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fingerprintTask, inferScene, tokenizeTask } from './fingerprint.js';
+import { captureProcedureCandidates, ensureProcedureCandidateSidecar } from './procedures.js';
 
 export const TASK_STATUSES = ['success', 'failed', 'partial', 'cancelled'];
 
@@ -25,6 +26,7 @@ export async function ensureTaskMemorySidecars(cfg) {
   await Promise.all([
     ensureSidecar(taskStorePath(cfg)),
     ensureSidecar(workflowStorePath(cfg)),
+    ensureProcedureCandidateSidecar(cfg),
   ]);
 }
 
@@ -85,9 +87,13 @@ export async function writeTaskRecord(cfg, input) {
   const filePath = taskStorePath(cfg);
   await ensureTaskMemorySidecars(cfg);
   await fs.appendFile(filePath, `${JSON.stringify(record)}\n`);
+  const procedureCandidates = record.status === 'success'
+    ? await captureProcedureCandidates(cfg)
+    : { path: path.join(cfg.memoryDir, 'operations', 'procedure-candidates.jsonl'), created: 0, candidates: [] };
   return {
     path: path.relative(cfg.workspaceRoot, filePath),
     record,
+    procedureCandidates,
   };
 }
 

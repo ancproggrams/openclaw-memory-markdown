@@ -8,8 +8,13 @@ It adds append-only JSONL stores under `memory/operations/` while keeping markdo
 
 - `memory/operations/tasks.jsonl`
 - `memory/operations/workflows.jsonl`
+- `memory/operations/procedure-candidates.jsonl`
 
 These files are created lazily.
+
+## Curated procedure output
+
+Strong reviewed candidates can be promoted into markdown playbooks under `memory/procedures/`, grouped by scene such as `deployment.md`, `debugging.md`, or `research.md`.
 
 ## Why this exists
 
@@ -20,6 +25,7 @@ The JSONL sidecars exist for a different job:
 - remembering prior task outcomes
 - avoiding repeated successful work
 - surfacing reusable workflows later
+- capturing candidate procedures from repeated successful executions
 - keeping the new behavior inspectable and reversible
 
 ## Tools
