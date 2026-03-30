@@ -1,8 +1,8 @@
 # Release notes
 
-## Marq Memory v0.6.0
+## Marqs Memorie v0.6.0
 
-Marq Memory stays markdown-first, but now adds two new additive capabilities:
+Marqs Memorie stays markdown-first, but now adds two new additive capabilities:
 
 - promotion intelligence with explicit sidecar tracking
 - scene-aware recall with scene/project ranking

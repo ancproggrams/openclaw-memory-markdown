@@ -1,6 +1,6 @@
-# Marq Memory
+# Marqs Memorie
 
-**Marq Memory** is a markdown-first memory plugin for OpenClaw.
+**Marqs Memorie** is a markdown-first memory plugin for OpenClaw.
 
 It keeps markdown as the source of truth while adding additive sidecars for operational memory, promotion tracking, and scene-aware recall.
 
