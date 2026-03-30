@@ -52,11 +52,20 @@ This layer expands recall without bloating the bootstrap files.
 
 ## What the plugin does
 
-This release ships three tools:
+This release ships three tools and a maintenance layer.
+
+Tools:
 
 - `marq_memory_search`
 - `marq_memory_append`
 - `marq_memory_explain`
+
+Maintenance scripts:
+
+- `scripts/pre-compaction-flush.js`
+- `scripts/consolidate-memory.js`
+- `scripts/quality-gate.js`
+- `scripts/reindex.js`
 
 ### `marq_memory_search`
 
@@ -98,10 +107,9 @@ It does **not** yet include:
 - semantic embeddings
 - graph memory
 - clustering
-- automatic promotion jobs
 - prompt auto-injection hooks
 
-Those are good next steps, but the base package intentionally keeps the architecture legible.
+Those are good next steps, but the package intentionally keeps the architecture legible.
 
 ## Installation
 
@@ -187,6 +195,8 @@ This package is structured to be easier to publish to npm or ClawHub:
 - packaged files allowlisted
 
 See `docs/PUBLISHING.md`.
+
+For the recurring maintenance side, see `docs/CRON_JOBS.md`.
 
 ## Philosophy
 

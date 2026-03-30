@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.3.0 - 2026-03-30
+
+Expanded release with maintenance scripts and documented cron workflow.
+
+### Added
+- pre-compaction flush script
+- daily consolidation script
+- quality gate script
+- reindex script
+- documented cron jobs for memory maintenance
+- package scripts for maintenance operations
+
+### Notes
+- semantic search and auto-recall hooks are still planned for a later release
+
 ## 0.2.0 - 2026-03-30
 
 Initial public-ready starter release.
@@ -12,6 +27,3 @@ Initial public-ready starter release.
 - config example
 - Node test suite
 - publish-oriented package metadata
-
-### Notes
-- semantic search and auto-recall hooks are planned for a later release

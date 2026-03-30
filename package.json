@@ -24,16 +24,25 @@
   ],
   "files": [
     "src",
+    "scripts",
     "docs",
     "examples",
     "README.md",
     "LICENSE",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "RELEASE_NOTES.md",
+    "PUBLISH_CHECKLIST.md",
     "openclaw.plugin.json"
   ],
   "scripts": {
     "test": "node --test",
     "verify": "node --test && npm pack --dry-run",
-    "release:check": "npm test && npm pack --dry-run"
+    "release:check": "npm test && npm pack --dry-run",
+    "memory:flush": "node scripts/pre-compaction-flush.js",
+    "memory:consolidate": "node scripts/consolidate-memory.js",
+    "memory:quality-gate": "node scripts/quality-gate.js",
+    "memory:reindex": "node scripts/reindex.js"
   },
   "dependencies": {
     "@sinclair/typebox": "^0.34.48",
