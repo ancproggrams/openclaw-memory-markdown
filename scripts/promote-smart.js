@@ -6,14 +6,7 @@ async function main() {
   const cfg = resolveConfig({ workspaceRoot: process.env.MARQ_MEMORY_ROOT || process.cwd() });
   const day = process.argv[2] || todayStamp();
   const result = await promoteDailyMemory(cfg, { day, mode: 'smart' });
-  console.log(JSON.stringify({
-    ok: true,
-    day,
-    promoted: result.promoted.length,
-    duplicates: result.duplicates.length,
-    conflicts: result.conflicts.length,
-    skipped: result.skipped.length,
-  }, null, 2));
+  console.log(JSON.stringify(result, null, 2));
 }
 
 main().catch((error) => {

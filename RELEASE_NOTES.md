@@ -1,36 +1,41 @@
 # Release notes
 
-## Marq Memory v0.3.0
+## Marq Memory v0.6.0
 
-Marq Memory is a markdown-first memory plugin for OpenClaw.
+Marq Memory stays markdown-first, but now adds two new additive capabilities:
 
-This release expands the base plugin with the maintenance side that belongs to the memory system:
-
-- layered memory instead of one giant memory blob
-- append-only daily notes for raw capture
-- curated core files for durable rules and facts
-- a separate recall layer on top of durable markdown storage
-- maintenance scripts for flush, consolidation, quality checks, and reindex
-- documented cron jobs for recurring memory hygiene
+- promotion intelligence with explicit sidecar tracking
+- scene-aware recall with scene/project ranking
 
 ### Included in this release
+
+Tools:
 
 - `marq_memory_search`
 - `marq_memory_append`
 - `marq_memory_explain`
+- `marq_task_check`
+- `marq_task_write`
+- `marq_memory_promote`
+- `marq_scene_recall`
+
+Scripts:
+
 - `scripts/pre-compaction-flush.js`
 - `scripts/consolidate-memory.js`
+- `scripts/promote-smart.js`
 - `scripts/quality-gate.js`
 - `scripts/reindex.js`
 
+### What changed
+
+- typed daily entries can now be promoted with duplicate and conflict tracking
+- registry and promotion sidecars make lifecycle decisions inspectable
+- scene-aware recall ranks deployment/debugging/coding-style hits above generic matches when possible
+
 ### Why this matters
 
-A useful memory system is not only retrieval. It also needs recurring maintenance so raw notes become durable memory and retrieval stays healthy over time.
+A memory system gets more useful when it can both:
 
-### Still planned
-
-- semantic search
-- recency weighting
-- smarter promotion logic
-- optional graph links
-- optional auto-recall hooks
+- avoid silently re-promoting the same durable content
+- bring the right memory to the top for the current type of task

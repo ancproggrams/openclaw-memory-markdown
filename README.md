@@ -2,129 +2,85 @@
 
 **Marq Memory** is a markdown-first memory plugin for OpenClaw.
 
-It packages a simple but practical memory architecture that is easy to inspect, easy to back up, and easy to understand.
+It keeps markdown as the source of truth while adding additive sidecars for operational memory, promotion tracking, and scene-aware recall.
 
-Instead of hiding memory in an opaque database, it treats markdown files as the source of truth.
+## Architecture
 
-At the same time, it explicitly recognizes that storage and retrieval are different jobs: markdown is the durable memory layer, while indexing/search can sit on top as a recall layer.
-
-## Why this plugin exists
-
-A lot of memory systems optimize for automation first. That sounds good, but it often creates three problems:
-
-1. memory becomes hard to inspect
-2. bad writes are hard to undo
-3. users stop trusting what the system remembers
-
-Marq Memory takes a different approach.
-
-It starts with a filesystem model that people can read and repair.
-
-## Core idea
-
-The plugin uses **layered memory**.
-
-### Layer 1 — Core memory
+### Layer 1 — Durable markdown storage
 
 Typical files:
 
 - `MEMORY.md`
 - `MEMORY_PREFERENCES.md`
 - `KNOWLEDGE_FACTS.md`
-
-These hold durable rules, preferences, and verified facts.
-
-### Layer 2 — Daily memory
-
-Typical path:
-
 - `memory/YYYY-MM-DD.md`
 
-This is the append-only chronological log for durable memory capture.
+These remain the readable, repairable source of truth.
 
-### Layer 3 — Supporting knowledge
+### Layer 2 — Operational memory sidecars
 
-Typical paths:
+Append-only JSONL sidecars under `memory/operations/`:
 
-- `memory/**/*.md`
-- `memory/facts/**/*.md`
-- `docs/**/*.md`
+- `memory/operations/tasks.jsonl`
+- `memory/operations/workflows.jsonl`
 
-This layer expands recall without bloating the bootstrap files.
+These support task dedup, reuse, and resumability without mutating curated markdown files.
 
-### Layer 4 — Recall / indexing layer
+### Layer 3 — Promotion intelligence sidecars
 
-This plugin starts with simple local file search, but the architecture is intentionally designed to work with an indexing layer on top.
+Append-only JSONL sidecars under `memory/`:
 
-That means:
+- `memory/registry.jsonl`
+- `memory/promotions.jsonl`
+- `memory/conflicts.jsonl`
 
-- markdown files stay the source of truth
-- an index or database can help with retrieval
-- retrieval can evolve without changing the storage model
+These record what got promoted, what was skipped as duplicate, and what was flagged as conflict.
 
-This mirrors how many real assistant memory systems work best in practice: one durable storage layer, one retrieval layer, and one maintenance layer that keeps both in sync.
+### Layer 4 — Recall layer
 
-## What the plugin does
+The plugin ships with local markdown search plus scene-aware/project-aware ranking.
 
-This release ships three tools and a maintenance layer.
+This keeps retrieval replaceable while making it more task-relevant.
 
-Tools:
+## Included tools
 
 - `marq_memory_search`
 - `marq_memory_append`
 - `marq_memory_explain`
+- `marq_task_check`
+- `marq_task_write`
+- `marq_memory_promote`
+- `marq_scene_recall`
 
-Maintenance scripts:
+## Maintenance scripts
 
-- `scripts/pre-compaction-flush.js`
-- `scripts/consolidate-memory.js`
-- `scripts/quality-gate.js`
-- `scripts/reindex.js`
+- `npm run memory:flush`
+- `npm run memory:consolidate`
+- `npm run memory:promote-smart`
+- `npm run memory:quality-gate`
+- `npm run memory:reindex`
 
-### `marq_memory_search`
+## Promotion intelligence in v0.6
 
-Searches across configured markdown memory sources and returns the strongest local hits.
+Smart promotion now:
 
-### `marq_memory_append`
+- parses typed daily entries (`[mem]`, `[fact]`, `[obs]`)
+- promotes durable `[mem]` entries to `MEMORY_PREFERENCES.md`
+- promotes durable `[fact]` entries to `KNOWLEDGE_FACTS.md`
+- skips exact and near-duplicate entries
+- flags possible fact conflicts into `memory/conflicts.jsonl`
+- records lifecycle traces in `memory/promotions.jsonl` and `memory/registry.jsonl`
 
-Appends a durable note to today’s canonical daily memory file.
+## Scene-aware recall in v0.6
 
-### `marq_memory_explain`
+`marq_scene_recall` ranks results using:
 
-Explains the active memory layout and config so users can understand how recall is wired.
+- text match score
+- inferred or explicit scene
+- project match
+- file-path hints from memory/docs structure
 
-## Why markdown-first is useful
-
-This design gives users:
-
-- transparent storage
-- local-first behavior
-- low operational complexity
-- easy git history
-- safer append-only raw capture
-- no required API keys
-- no required embeddings for the base version
-
-## Current implementation scope
-
-This is a **clean starter plugin** designed to be understandable and publishable.
-
-Current implementation choices:
-
-- local file collection via glob patterns
-- lightweight term-based ranking
-- append-only writes to daily notes
-- config-driven recall surface
-- maintenance scripts that keep the durable layer and the recall layer aligned over time
-
-It does **not** yet include:
-
-- semantic embeddings
-- graph memory
-- clustering
-- prompt auto-injection hooks
-
-Those are good next steps, but the package intentionally keeps the architecture legible.
+This stays additive on top of the existing local markdown search.
 
 ## Installation
 
@@ -136,91 +92,29 @@ Then configure the plugin in OpenClaw and point `workspaceRoot` to the right fol
 
 See `examples/openclaw.config.example.json`.
 
-## Configuration
+## Documentation
 
-### `workspaceRoot`
-
-The root folder where memory files live.
-
-### `memoryDir`
-
-The folder used for daily append-only memory notes.
-
-### `coreFiles`
-
-The compact durable memory files.
-
-### `factsGlobs`
-
-Additional markdown memory and fact files to search.
-
-### `includeDocs`
-
-Whether to include docs in the search surface.
-
-### `docsGlobs`
-
-Glob patterns for docs that should be searchable.
-
-### `maxFileBytes`
-
-Large files are skipped to keep search predictable.
-
-### `dailyWriteMode`
-
-Currently fixed to `append-only`.
-
-## Recommended use cases
-
-This plugin is a strong fit for:
-
-- personal assistants
-- operators who want auditable memory
-- markdown-heavy workspaces
-- local-first OpenClaw setups
-- people who prefer inspectable recall over black-box memory mutation
-
-## Roadmap
-
-Planned next-step improvements:
-
-1. semantic search mode
-2. recency weighting / temporal decay
-3. promotion pipeline from daily notes to curated memory
-4. deduplication for durable facts
-5. optional graph links between problem, fix, and outcome
-6. optional auto-recall hooks
+- `docs/OPERATIONS_MEMORY.md`
+- `docs/PROMOTION_RULES.md`
+- `docs/SCENE_RECALL.md`
+- `docs/CRON_JOBS.md`
+- `docs/ARCHITECTURE.md`
+- `docs/USAGE.md`
 
 ## Verification
 
-Basic tests are included with Node’s built-in test runner.
-
 ```bash
 npm test
+npm pack --dry-run
 ```
 
-## Publishing
-
-This package is structured to be easier to publish to npm or ClawHub:
-
-- manifest included
-- package metadata cleaned up
-- docs split into focused files
-- tests included
-- packaged files allowlisted
-
-See `docs/PUBLISHING.md`.
-
-For the recurring maintenance side, see `docs/CRON_JOBS.md`.
-
 ## Philosophy
-
-This plugin is built around one principle:
 
 **memory should be trustworthy before it becomes clever.**
 
 In practice that means:
 
-- markdown is the durable memory layer
-- search or database indexing is the recall layer
-- cron jobs and maintenance scripts are the operational layer that keeps them working together
+- markdown stays durable
+- sidecars stay additive
+- promotion decisions stay inspectable
+- retrieval can improve without rewriting storage

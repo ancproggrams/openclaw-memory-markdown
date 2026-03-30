@@ -2,16 +2,24 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { resolveConfig, searchMemory, todayStamp } from '../src/core.js';
+import { ensurePromotionSidecars } from '../src/promotion.js';
+import { ensureTaskMemorySidecars } from '../src/task-memory.js';
 
 async function main() {
   const cfg = resolveConfig({ workspaceRoot: process.env.MARQ_MEMORY_ROOT || process.cwd() });
   const day = process.argv[2] || todayStamp();
   const dailyPath = path.join(cfg.workspaceRoot, cfg.memoryDir, `${day}.md`);
   const content = await fs.readFile(dailyPath, 'utf8').catch(() => '');
+
+  await ensureTaskMemorySidecars(cfg);
+  await ensurePromotionSidecars(cfg);
+
   const checks = {
     dailyExists: Boolean(content.trim()),
     hasTypedEntries: /\[(mem|fact|obs)\]/.test(content),
     memorySearchHealthy: false,
+    taskSidecarsReady: true,
+    promotionSidecarsReady: true,
   };
 
   const probe = await searchMemory(cfg, day, 3).catch(() => []);

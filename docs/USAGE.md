@@ -31,6 +31,37 @@ Returns the active layout and config summary.
 
 Useful for onboarding, support, and debugging.
 
+## Tool: `marq_task_check`
+
+Checks the operational task sidecar for similar prior work.
+
+Example:
+
+```json
+{
+  "taskDescription": "deploy backend via docker compose",
+  "scene": "deployment",
+  "project": "service-desk-openclaw"
+}
+```
+
+## Tool: `marq_task_write`
+
+Appends a task outcome to `memory/operations/tasks.jsonl`.
+
+Example:
+
+```json
+{
+  "taskDescription": "deploy backend via docker compose",
+  "scene": "deployment",
+  "project": "service-desk-openclaw",
+  "status": "success",
+  "summary": "Health check passed",
+  "reusable": true
+}
+```
+
 ## Recommended note style
 
 Examples:

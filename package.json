@@ -1,6 +1,6 @@
 {
   "name": "@marq/openclaw-memory-markdown",
-  "version": "0.3.0",
+  "version": "0.6.0",
   "description": "Markdown-first memory plugin for OpenClaw with layered storage, append-only daily notes, curated memory files, and transparent local recall.",
   "type": "module",
   "license": "MIT",
@@ -26,6 +26,7 @@
     "src",
     "scripts",
     "docs",
+    "tests",
     "examples",
     "README.md",
     "LICENSE",
@@ -41,6 +42,7 @@
     "release:check": "npm test && npm pack --dry-run",
     "memory:flush": "node scripts/pre-compaction-flush.js",
     "memory:consolidate": "node scripts/consolidate-memory.js",
+    "memory:promote-smart": "node scripts/promote-smart.js",
     "memory:quality-gate": "node scripts/quality-gate.js",
     "memory:reindex": "node scripts/reindex.js"
   },
