@@ -1,0 +1,34 @@
+{
+  "id": "marq-memory",
+  "kind": "memory",
+  "name": "Marq Memory",
+  "description": "Markdown-first memory plugin with layered storage, append-only daily notes, curated core files, and transparent local recall for OpenClaw.",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "workspaceRoot": { "type": "string" },
+      "memoryDir": { "type": "string" },
+      "coreFiles": {
+        "type": "array",
+        "items": { "type": "string" }
+      },
+      "factsGlobs": {
+        "type": "array",
+        "items": { "type": "string" }
+      },
+      "includeDocs": { "type": "boolean" },
+      "docsGlobs": {
+        "type": "array",
+        "items": { "type": "string" }
+      },
+      "maxFileBytes": { "type": "number", "minimum": 1024 },
+      "autoRecall": { "type": "boolean" },
+      "autoInjectMaxResults": { "type": "number", "minimum": 1, "maximum": 10 },
+      "dailyWriteMode": {
+        "type": "string",
+        "enum": ["append-only"]
+      }
+    }
+  }
+}

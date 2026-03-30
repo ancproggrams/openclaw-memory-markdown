@@ -1,0 +1,30 @@
+{
+  "plugins": {
+    "entries": {
+      "marq-memory": {
+        "enabled": true,
+        "config": {
+          "workspaceRoot": "~/.openclaw/workspace",
+          "memoryDir": "memory",
+          "coreFiles": [
+            "MEMORY.md",
+            "MEMORY_PREFERENCES.md",
+            "KNOWLEDGE_FACTS.md"
+          ],
+          "factsGlobs": [
+            "memory/**/*.md",
+            "memory/facts/**/*.md"
+          ],
+          "includeDocs": true,
+          "docsGlobs": [
+            "docs/**/*.md"
+          ],
+          "maxFileBytes": 262144,
+          "autoRecall": false,
+          "autoInjectMaxResults": 3,
+          "dailyWriteMode": "append-only"
+        }
+      }
+    }
+  }
+}

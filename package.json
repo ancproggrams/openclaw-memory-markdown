@@ -1,0 +1,50 @@
+{
+  "name": "@marq/openclaw-memory-markdown",
+  "version": "0.2.0",
+  "description": "Markdown-first memory plugin for OpenClaw with layered storage, append-only daily notes, curated memory files, and transparent local recall.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Marq",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ancproggrams/openclaw-memory-markdown"
+  },
+  "homepage": "https://github.com/ancproggrams/openclaw-memory-markdown",
+  "bugs": {
+    "url": "https://github.com/ancproggrams/openclaw-memory-markdown/issues"
+  },
+  "keywords": [
+    "openclaw",
+    "clawhub",
+    "plugin",
+    "memory",
+    "markdown",
+    "rag",
+    "personal-assistant"
+  ],
+  "files": [
+    "src",
+    "docs",
+    "examples",
+    "README.md",
+    "LICENSE",
+    "openclaw.plugin.json"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "verify": "node --test && npm pack --dry-run",
+    "release:check": "npm test && npm pack --dry-run"
+  },
+  "dependencies": {
+    "@sinclair/typebox": "^0.34.48",
+    "fast-glob": "^3.3.3"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "openclaw": {
+    "extensions": [
+      "./src/index.js"
+    ]
+  }
+}
