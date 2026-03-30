@@ -4,6 +4,8 @@ Marq Memory is designed to work best with a few recurring maintenance jobs.
 
 These jobs are the operational side of the memory system.
 
+They are what make the storage layer and the recall layer work together over time.
+
 ## 1. Pre-compaction flush
 
 Purpose:

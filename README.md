@@ -6,6 +6,8 @@ It packages a simple but practical memory architecture that is easy to inspect, 
 
 Instead of hiding memory in an opaque database, it treats markdown files as the source of truth.
 
+At the same time, it explicitly recognizes that storage and retrieval are different jobs: markdown is the durable memory layer, while indexing/search can sit on top as a recall layer.
+
 ## Why this plugin exists
 
 A lot of memory systems optimize for automation first. That sounds good, but it often creates three problems:
@@ -49,6 +51,18 @@ Typical paths:
 - `docs/**/*.md`
 
 This layer expands recall without bloating the bootstrap files.
+
+### Layer 4 — Recall / indexing layer
+
+This plugin starts with simple local file search, but the architecture is intentionally designed to work with an indexing layer on top.
+
+That means:
+
+- markdown files stay the source of truth
+- an index or database can help with retrieval
+- retrieval can evolve without changing the storage model
+
+This mirrors how many real assistant memory systems work best in practice: one durable storage layer, one retrieval layer, and one maintenance layer that keeps both in sync.
 
 ## What the plugin does
 
@@ -101,6 +115,7 @@ Current implementation choices:
 - lightweight term-based ranking
 - append-only writes to daily notes
 - config-driven recall surface
+- maintenance scripts that keep the durable layer and the recall layer aligned over time
 
 It does **not** yet include:
 
@@ -203,3 +218,9 @@ For the recurring maintenance side, see `docs/CRON_JOBS.md`.
 This plugin is built around one principle:
 
 **memory should be trustworthy before it becomes clever.**
+
+In practice that means:
+
+- markdown is the durable memory layer
+- search or database indexing is the recall layer
+- cron jobs and maintenance scripts are the operational layer that keeps them working together

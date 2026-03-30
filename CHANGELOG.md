@@ -10,6 +10,7 @@ Expanded release with maintenance scripts and documented cron workflow.
 - quality gate script
 - reindex script
 - documented cron jobs for memory maintenance
+- explicit storage + recall + maintenance architecture explanation
 - package scripts for maintenance operations
 
 ### Notes

@@ -9,7 +9,7 @@ This release expands the base plugin with the maintenance side that belongs to t
 - layered memory instead of one giant memory blob
 - append-only daily notes for raw capture
 - curated core files for durable rules and facts
-- transparent local recall over markdown
+- a separate recall layer on top of durable markdown storage
 - maintenance scripts for flush, consolidation, quality checks, and reindex
 - documented cron jobs for recurring memory hygiene
 
