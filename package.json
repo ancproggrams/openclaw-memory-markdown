@@ -1,6 +1,6 @@
 {
   "name": "@marq/openclaw-memory-markdown",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Markdown-first memory plugin for OpenClaw with layered storage, append-only daily notes, curated memory files, and transparent local recall.",
   "type": "module",
   "license": "MIT",
