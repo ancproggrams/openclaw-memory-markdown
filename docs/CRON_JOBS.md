@@ -68,10 +68,24 @@ Script:
 npm run memory:reindex
 ```
 
+## 6. Archive recent sessions
+
+Purpose:
+
+- ingest recent OpenClaw session logs into the archival memory layer
+- keep historical recall fed without polluting canonical memory
+
+Script:
+
+```bash
+npm run memory:archive-sessions -- ~/.openclaw/agents/main/sessions /path/to/workspace
+```
+
 ## Suggested cron setup
 
 ```cron
 0 */4 * * * cd /path/to/openclaw-memory-markdown && npm run memory:reindex >> logs/memory-reindex.log 2>&1
+30 */4 * * * cd /path/to/openclaw-memory-markdown && npm run memory:archive-sessions -- ~/.openclaw/agents/main/sessions /path/to/workspace >> logs/memory-archive-sessions.log 2>&1
 0 2 * * * cd /path/to/openclaw-memory-markdown && npm run memory:consolidate -- $(date +\%F) >> logs/memory-consolidate.log 2>&1
 15 2 * * * cd /path/to/openclaw-memory-markdown && npm run memory:quality-gate -- $(date +\%F) >> logs/memory-quality.log 2>&1
 ```

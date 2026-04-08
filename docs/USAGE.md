@@ -82,6 +82,39 @@ Example:
 }
 ```
 
+## Tool: `marq_memory_recall`
+
+Runs unified recall with canonical memory first and archive second when the query is historical or when archive is explicitly requested.
+
+Example:
+
+```json
+{
+  "query": "waarom kozen we Clerk voor auth",
+  "project": "opdrchtn",
+  "historical": true,
+  "maxResults": 5
+}
+```
+
+## Tool: `marq_memory_archive_session_ingest`
+
+Ingests a structured session transcript into archival memory.
+
+Example:
+
+```json
+{
+  "sessionId": "session-123",
+  "title": "Auth discussion",
+  "messages": [
+    { "role": "user", "text": "Waarom kozen we Clerk?" },
+    { "role": "assistant", "text": "Omdat OAuth recovery bleef breken." }
+  ],
+  "project": "opdrchtn"
+}
+```
+
 ## Tool: `marq_skill_update_suggestions`
 
 Generates additive skill-update suggestions from stable procedural memory and returns the current pending-review set.

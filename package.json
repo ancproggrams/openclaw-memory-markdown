@@ -48,7 +48,8 @@
     "memory:reindex": "node scripts/reindex.js",
     "memory:review-procedures": "node scripts/review-procedure-candidates.js",
     "memory:promote-procedures": "node scripts/promote-procedures.js",
-    "memory:skill-update-suggestions": "node scripts/generate-skill-update-suggestions.js"
+    "memory:skill-update-suggestions": "node scripts/generate-skill-update-suggestions.js",
+    "memory:archive-sessions": "node scripts/archive-recent-sessions.js"
   },
   "dependencies": {
     "@sinclair/typebox": "^0.34.48",

@@ -1,6 +1,9 @@
 import { Type } from '@sinclair/typebox';
 import { definePluginEntry } from 'openclaw/plugin-sdk/plugin-entry';
 import { appendDailyMemory, resolveConfig, searchMemory } from './core.js';
+import { ingestArchive, searchArchive } from './archive.js';
+import { extractArchiveCandidates, promoteArchiveCandidates } from './archive-promotion.js';
+import { unifiedRecall, ingestSessionArchive } from './recall.js';
 import { promoteDailyMemory } from './promotion.js';
 import { procedureRecall } from './procedure-recall.js';
 import { sceneRecall } from './scene-recall.js';
@@ -63,6 +66,14 @@ export default definePluginEntry({
               docsGlobs: cfg.includeDocs ? cfg.docsGlobs : [],
               dailyWriteMode: cfg.dailyWriteMode,
               autoRecall: cfg.autoRecall,
+              archive: {
+                enabled: cfg.archiveEnabled,
+                sessionsDir: cfg.archiveSessionsDir,
+                chunksDir: cfg.archiveChunksDir,
+                indexesDir: cfg.archiveIndexesDir,
+                entityMapsDir: cfg.archiveEntityMapsDir,
+                canonical: false,
+              },
               operationalMemory: {
                 taskStore: `${cfg.memoryDir}/operations/tasks.jsonl`,
                 workflowStore: `${cfg.memoryDir}/operations/workflows.jsonl`,
@@ -79,6 +90,142 @@ export default definePluginEntry({
                 skillUpdateSuggestions: `${cfg.memoryDir}/skill-update-suggestions.jsonl`,
               },
             }, null, 2),
+          }],
+        };
+      },
+    });
+
+    api.registerTool({
+      name: 'marq_memory_archive_ingest',
+      description: 'Ingest raw session or conversation material into the archival memory layer under memory/archive/.',
+      parameters: Type.Object({
+        title: Type.String(),
+        text: Type.Optional(Type.String()),
+        messages: Type.Optional(Type.Array(Type.Object({
+          role: Type.String(),
+          text: Type.String(),
+          timestamp: Type.Optional(Type.String()),
+        }))),
+        kind: Type.Optional(Type.String()),
+        source: Type.Optional(Type.String()),
+        project: Type.Optional(Type.String()),
+        scene: Type.Optional(Type.String()),
+        participants: Type.Optional(Type.Array(Type.String())),
+        createdAt: Type.Optional(Type.String()),
+        archiveId: Type.Optional(Type.String()),
+      }),
+      async execute(_id, params) {
+        const result = await ingestArchive(cfg, params);
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          }],
+        };
+      },
+    });
+
+    api.registerTool({
+      name: 'marq_memory_archive_search',
+      description: 'Search the non-canonical archival memory layer for historical conversation context.',
+      parameters: Type.Object({
+        query: Type.String(),
+        scene: Type.Optional(Type.String()),
+        project: Type.Optional(Type.String()),
+        maxResults: Type.Optional(Type.Number({ minimum: 1, maximum: 10 })),
+      }),
+      async execute(_id, params) {
+        const result = await searchArchive(cfg, params);
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          }],
+        };
+      },
+    });
+
+    api.registerTool({
+      name: 'marq_memory_archive_extract_candidates',
+      description: 'Extract candidate durable facts or preferences from archival conversation chunks into a reviewable sidecar.',
+      parameters: Type.Object({}),
+      async execute() {
+        const result = await extractArchiveCandidates(cfg, {});
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          }],
+        };
+      },
+    });
+
+    api.registerTool({
+      name: 'marq_memory_archive_promote',
+      description: 'Promote reviewable archive candidates into canonical markdown with duplicate/conflict checks.',
+      parameters: Type.Object({
+        minimumConfidence: Type.Optional(Type.Number({ minimum: 0, maximum: 1 })),
+        maxPromotions: Type.Optional(Type.Number({ minimum: 1, maximum: 100 })),
+      }),
+      async execute(_id, params) {
+        const result = await promoteArchiveCandidates(cfg, params);
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          }],
+        };
+      },
+    });
+
+    api.registerTool({
+      name: 'marq_memory_recall',
+      description: 'Run unified recall: canonical memory first, archival memory second for historical context.',
+      parameters: Type.Object({
+        query: Type.String(),
+        scene: Type.Optional(Type.String()),
+        project: Type.Optional(Type.String()),
+        taskLike: Type.Optional(Type.Boolean()),
+        historical: Type.Optional(Type.Boolean()),
+        includeArchive: Type.Optional(Type.Boolean()),
+        maxResults: Type.Optional(Type.Number({ minimum: 1, maximum: 10 })),
+      }),
+      async execute(_id, params) {
+        const result = await unifiedRecall(cfg, params);
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          }],
+        };
+      },
+    });
+
+    api.registerTool({
+      name: 'marq_memory_archive_session_ingest',
+      description: 'Ingest a structured OpenClaw session transcript into the archival memory layer.',
+      parameters: Type.Object({
+        sessionId: Type.Optional(Type.String()),
+        archiveId: Type.Optional(Type.String()),
+        title: Type.Optional(Type.String()),
+        messages: Type.Array(Type.Object({
+          role: Type.String(),
+          text: Type.String(),
+          timestamp: Type.Optional(Type.String()),
+        })),
+        kind: Type.Optional(Type.String()),
+        source: Type.Optional(Type.String()),
+        project: Type.Optional(Type.String()),
+        scene: Type.Optional(Type.String()),
+        participants: Type.Optional(Type.Array(Type.String())),
+        createdAt: Type.Optional(Type.String()),
+      }),
+      async execute(_id, params) {
+        const result = await ingestSessionArchive(cfg, params);
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
           }],
         };
       },

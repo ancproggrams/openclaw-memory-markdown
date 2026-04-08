@@ -13,6 +13,13 @@ export const DEFAULTS = {
   autoRecall: false,
   autoInjectMaxResults: 3,
   dailyWriteMode: 'append-only',
+  archiveEnabled: true,
+  archiveSessionsDir: 'memory/archive/conversations/sessions',
+  archiveChunksDir: 'memory/archive/chunks',
+  archiveIndexesDir: 'memory/archive/indexes',
+  archiveEntityMapsDir: 'memory/archive/entity_maps',
+  archiveChunkMaxChars: 1200,
+  archiveChunkOverlapChars: 200,
 };
 
 export function expandHome(input) {

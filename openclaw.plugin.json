@@ -28,7 +28,14 @@
       "dailyWriteMode": {
         "type": "string",
         "enum": ["append-only"]
-      }
+      },
+      "archiveEnabled": { "type": "boolean" },
+      "archiveSessionsDir": { "type": "string" },
+      "archiveChunksDir": { "type": "string" },
+      "archiveIndexesDir": { "type": "string" },
+      "archiveEntityMapsDir": { "type": "string" },
+      "archiveChunkMaxChars": { "type": "number", "minimum": 200 },
+      "archiveChunkOverlapChars": { "type": "number", "minimum": 0 }
     }
   }
 }
